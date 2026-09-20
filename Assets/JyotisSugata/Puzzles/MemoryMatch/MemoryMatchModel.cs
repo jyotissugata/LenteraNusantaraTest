@@ -122,5 +122,11 @@ namespace JyotisSugata.Puzzles.MemoryMatch
         {
             return _cards;
         }
+
+        public void ResetMismatchedPair(int a, int b)
+        {
+            if (a >= 0 && a < _cards.Count) _cards[a].IsFaceUp = false;
+            if (b >= 0 && b < _cards.Count) _cards[b].IsFaceUp = false;
+        }
     }
 }

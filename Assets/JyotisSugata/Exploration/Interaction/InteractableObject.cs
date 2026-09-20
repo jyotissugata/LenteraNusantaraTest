@@ -1,15 +1,6 @@
-using JyotisSugata.Core.Events;
-using JyotisSugata.Core.StateMachine;
-using JyotisSugata.Core.Input;
-using JyotisSugata.Exploration.Player;
-using JyotisSugata.Exploration.Interaction;
-using JyotisSugata.Puzzles.Shared;
-using JyotisSugata.Puzzles.MemoryMatch;
-using JyotisSugata.Puzzles.NumpadPasscode;
-using JyotisSugata.UI.HUD;
-using JyotisSugata.UI.Transitions;
-
 using UnityEngine;
+using JyotisSugata.Core.Events;
+using JyotisSugata.Puzzles.Shared;
 
 namespace JyotisSugata.Exploration.Interaction
 {
@@ -26,6 +17,8 @@ namespace JyotisSugata.Exploration.Interaction
         private GameObject _activeVFX;
         private bool _playerInRange = false;
 
+        public static System.Action<Transform> OnInteractionStarted;
+
         public void Interact()
         {
             if (_puzzleDefinition == null)
@@ -34,6 +27,8 @@ namespace JyotisSugata.Exploration.Interaction
                 return;
             }
             
+            OnInteractionStarted?.Invoke(this.transform);
+
             if (_onPuzzleRequested != null)
             {
                 _onPuzzleRequested.Raise(_puzzleDefinition);

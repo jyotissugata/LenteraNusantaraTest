@@ -12,6 +12,7 @@ using JyotisSugata.UI.Transitions;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace JyotisSugata.Puzzles.MemoryMatch
 {
@@ -29,22 +30,45 @@ namespace JyotisSugata.Puzzles.MemoryMatch
             MemoryMatchDefinition def = definition as MemoryMatchDefinition;
             if (def == null) return;
 
+            // Update GridLayoutGroup column count dynamically from definition
+            GridLayoutGroup gridLayout = _cardGridParent.GetComponent<GridLayoutGroup>();
+            if (gridLayout != null)
+            {
+                gridLayout.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
+                gridLayout.constraintCount = def.Columns;
+            }
+
+            // Destroy any existing cards
             foreach (var view in _cardViews)
             {
                 if (view != null) Destroy(view.gameObject);
             }
             _cardViews.Clear();
 
+            // Create card views without icons — icons will be assigned after
+            // the model shuffles, via SetupCardIcons()
             int totalCards = def.Columns * def.Rows;
-            int iconCount = def.CardIcons.Count;
-
             for (int i = 0; i < totalCards; i++)
             {
                 CardView cardView = Instantiate(_cardViewPrefab, _cardGridParent);
-                Sprite icon = iconCount > 0 ? def.CardIcons[i % iconCount] : null;
-                cardView.Setup(i, icon);
+                cardView.Setup(i, null);
                 cardView.OnCardClicked += HandleCardClicked;
                 _cardViews.Add(cardView);
+            }
+        }
+
+        /// <summary>
+        /// Called by the Controller after the Model has shuffled the cards.
+        /// Assigns the correct icon to each card based on its PairId,
+        /// so visually identical icons will always match in the game logic.
+        /// </summary>
+        public void SetupCardIcons(List<MemoryMatchModel.CardData> shuffledCards, List<Sprite> icons)
+        {
+            int iconCount = icons != null ? icons.Count : 0;
+            for (int i = 0; i < _cardViews.Count && i < shuffledCards.Count; i++)
+            {
+                Sprite icon = iconCount > 0 ? icons[shuffledCards[i].PairId % iconCount] : null;
+                _cardViews[i].SetIcon(icon);
             }
         }
 

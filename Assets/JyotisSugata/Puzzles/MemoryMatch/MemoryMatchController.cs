@@ -56,11 +56,21 @@ namespace JyotisSugata.Puzzles.MemoryMatch
             if (definition == null) return;
             
             int pairs = (definition.Columns * definition.Rows) / 2;
-            _model.Initialize(definition.Columns, definition.Rows, pairs);
-            
+
+            // 1. Initialize the view first — creates the card GameObjects
             if (_view != null)
             {
                 _view.Initialize(definition);
+            }
+
+            // 2. Initialize the model — randomly shuffles cards with PairIds
+            _model.Initialize(definition.Columns, definition.Rows, pairs);
+
+            // 3. Now that the model has shuffled, assign icons by PairId
+            //    so cards with the same icon will always match each other
+            if (_view != null)
+            {
+                _view.SetupCardIcons(_model.GetCards(), definition.CardIcons);
             }
         }
 
@@ -102,6 +112,10 @@ namespace JyotisSugata.Puzzles.MemoryMatch
         private IEnumerator FlipBackAfterDelay(int a, int b)
         {
             yield return new WaitForSecondsRealtime(1f);
+            if (_model != null)
+            {
+                _model.ResetMismatchedPair(a, b);
+            }
             if (_view != null)
             {
                 _view.ShowCard(a, false);

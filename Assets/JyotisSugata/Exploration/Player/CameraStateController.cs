@@ -33,6 +33,7 @@ namespace JyotisSugata.Exploration.Player
         private float _cinemachineTargetYaw;
         private float _cinemachineTargetPitch;
         private bool _isActive = false;
+        private Transform _lastInteractableTarget;
 
         private void Start()
         {
@@ -52,6 +53,7 @@ namespace JyotisSugata.Exploration.Player
             {
                 _inputReader.OnLookInput += HandleLookInput;
             }
+            InteractableObject.OnInteractionStarted += HandleInteractionStarted;
         }
 
         private void OnDisable()
@@ -64,6 +66,12 @@ namespace JyotisSugata.Exploration.Player
             {
                 _inputReader.OnLookInput -= HandleLookInput;
             }
+            InteractableObject.OnInteractionStarted -= HandleInteractionStarted;
+        }
+
+        private void HandleInteractionStarted(Transform target)
+        {
+            _lastInteractableTarget = target;
         }
 
         private void LateUpdate()
@@ -101,7 +109,18 @@ namespace JyotisSugata.Exploration.Player
             {
                 _isActive = false;
                 if (_explorationCamera != null) _explorationCamera.Priority = 9;
-                if (_puzzleCamera != null) _puzzleCamera.Priority = 11;
+                
+                // Reposition the puzzle camera dynamically to frame the object
+                if (_puzzleCamera != null && _lastInteractableTarget != null)
+                {
+                    // Place camera 1.5 units in front and slightly above the object
+                    Vector3 idealPos = _lastInteractableTarget.position + _lastInteractableTarget.forward * 1.5f + Vector3.up * 1.0f;
+                    _puzzleCamera.transform.position = idealPos;
+                    _puzzleCamera.transform.LookAt(_lastInteractableTarget);
+                    
+                    _puzzleCamera.Priority = 11;
+                }
+                
                 Cursor.lockState = CursorLockMode.None;
                 Cursor.visible = true;
             }

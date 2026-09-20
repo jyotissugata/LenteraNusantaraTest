@@ -41,6 +41,15 @@ namespace JyotisSugata.Puzzles.MemoryMatch
             }
         }
 
+        /// <summary>
+        /// Updates the card's icon sprite. Used when icons are assigned
+        /// after creation based on the shuffled model data.
+        /// </summary>
+        public void SetIcon(Sprite sprite)
+        {
+            if (_frontImage != null) _frontImage.sprite = sprite;
+        }
+
         public void FlipToFront()
         {
             if (_isAnimating) return;
