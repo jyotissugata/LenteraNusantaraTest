@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: Numpad_4Digit
   m_EditorClassIdentifier: Assembly-CSharp::JyotisSugata.Puzzles.NumpadPasscode.NumpadDefinition
   _puzzleType: 1
-  _puzzleUIPrefab: {fileID: 0}
+  _puzzleUIPrefab: {fileID: 691178180144784759, guid: 60d9ca266fdc044448e9118155d09266, type: 3}
   _digitCount: 4
