@@ -17,8 +17,6 @@ namespace JyotisSugata.Exploration.Player
     public class PlayerController : MonoBehaviour
     {
         [Header("Settings")]
-        [SerializeField] private float _walkSpeed = 4f;
-        [SerializeField] private float _sprintSpeed = 8f;
         [SerializeField] private float _rotationSmoothTime = 0.12f;
         [SerializeField] private float _gravity = -15f;
         
@@ -29,10 +27,19 @@ namespace JyotisSugata.Exploration.Player
         private CharacterController _characterController;
         private Vector2 _moveInput;
         private bool _isSprinting;
-        public bool IsSprinting => _isSprinting;
+        private float _currentMoveSpeed = 4f;
         private float _verticalVelocity;
         private float _rotationVelocity;
         private bool _isActive = true;
+
+        public Vector2 MoveInput => _moveInput;
+        public bool IsSprinting => _isSprinting;
+        public bool IsGrounded => _characterController != null && _characterController.isGrounded;
+
+        public void SetMoveSpeed(float speed)
+        {
+            _currentMoveSpeed = speed;
+        }
 
         private void Awake()
         {
@@ -81,7 +88,7 @@ namespace JyotisSugata.Exploration.Player
             }
 
             // Handle Movement (Camera-Relative)
-            float speed = _isSprinting ? _sprintSpeed : _walkSpeed;
+            float speed = _currentMoveSpeed;
             Vector3 inputDirection = new Vector3(_moveInput.x, 0.0f, _moveInput.y).normalized;
 
             if (inputDirection.magnitude >= 0.1f)
