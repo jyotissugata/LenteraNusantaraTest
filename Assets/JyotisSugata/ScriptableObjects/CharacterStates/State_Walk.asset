@@ -9,10 +9,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 921966fb4d750464987a64ddb9a3d0c0, type: 3}
+  m_Script: {fileID: 11500000, guid: b57aa1d0f3603c849aecd282eb8aa1cf, type: 3}
   m_Name: State_Walk
   m_EditorClassIdentifier: Assembly-CSharp::JyotisSugata.Exploration.Player.StateMachine.WalkStateSO
-  _transitions:
-  - {fileID: 11400000, guid: 97ac953976c3e2f4f9eafe1090a86b68, type: 2}
+  _transitions: []
   _moveSpeed: 4
-  _animatorSpeedValue: 1
+  _animatorFloatParam: Speed
+  _animatorSpeedValue: 0.5

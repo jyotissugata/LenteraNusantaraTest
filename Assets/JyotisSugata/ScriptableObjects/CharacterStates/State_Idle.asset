@@ -9,9 +9,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3774c9db8f119bd4190f4043d7959478, type: 3}
+  m_Script: {fileID: 11500000, guid: b57aa1d0f3603c849aecd282eb8aa1cf, type: 3}
   m_Name: State_Idle
   m_EditorClassIdentifier: Assembly-CSharp::JyotisSugata.Exploration.Player.StateMachine.IdleStateSO
-  _transitions:
-  - {fileID: 11400000, guid: 0dba8de66c376f344b56e7c8c8caaf65, type: 2}
+  _transitions: []
   _moveSpeed: 0
+  _animatorFloatParam: Speed
+  _animatorSpeedValue: 0

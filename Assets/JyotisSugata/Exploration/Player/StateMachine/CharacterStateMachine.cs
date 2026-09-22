@@ -65,34 +65,41 @@ namespace JyotisSugata.Exploration.Player.StateMachine
 
         private void Update()
         {
-            if (_currentState == null) return;
-
             CharacterStateSO nextState = null;
 
-            // 1. Check global 'Any State' transitions first
-            if (_anyStateTransitions != null)
+            if (_currentState == null)
             {
-                foreach (var transition in _anyStateTransitions)
+                TransitionTo(FallbackState);
+                return;
+            }
+            
+            if (_currentState is LoopStateSO)
+            {
+                // 1. Check global 'Any State' transitions first
+                if (_anyStateTransitions != null)
                 {
-                    // Ensure we don't infinitely re-enter the same state if already in it
-                    if (transition.IsMet(this))
+                    foreach (var transition in _anyStateTransitions)
                     {
-                        nextState = (transition.TargetState != _currentState) ? transition.TargetState : null;
-                        break;
+                        // Ensure we don't infinitely re-enter the same state if already in it
+                        if (transition.IsMet(this))
+                        {
+                            nextState = (transition.TargetState != _currentState) ? transition.TargetState : null;
+                            break;
+                        }
                     }
                 }
-            }
 
-            // 2. If no global transition was met, check local state transitions
-            if (nextState == null)
-            {
-                nextState = _currentState.CheckTransitions(this);
-            }
+                // 2. If no global transition was met, check local state transitions
+                if (nextState == null)
+                {
+                    nextState = _currentState.CheckTransitions(this);
+                }
 
-            // 3. Transition if found
-            if (nextState != null)
-            {
-                TransitionTo(nextState);
+                // 3. Transition if found
+                if (nextState != null)
+                {
+                    TransitionTo(nextState);
+                }
             }
 
             _currentState.OnUpdate(this);

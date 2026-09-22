@@ -1,16 +1,6 @@
-using JyotisSugata.Core.Events;
-using JyotisSugata.Core.StateMachine;
-using JyotisSugata.Core.Input;
-using JyotisSugata.Exploration.Player;
-using JyotisSugata.Exploration.Interaction;
-using JyotisSugata.Puzzles.Shared;
-using JyotisSugata.Puzzles.MemoryMatch;
-using JyotisSugata.Puzzles.NumpadPasscode;
-using JyotisSugata.UI.HUD;
-using JyotisSugata.UI.Transitions;
-
 using System.Collections;
 using UnityEngine;
+using JyotisSugata.Puzzles.Shared;
 
 namespace JyotisSugata.UI.Transitions
 {
@@ -21,28 +11,50 @@ namespace JyotisSugata.UI.Transitions
         [SerializeField] private Transform _puzzleUIPanelParent;
 
         private GameObject _currentPuzzleInstance;
-        private bool _isTransitioning = false;
+        private Coroutine _transitionCoroutine;
+        private CanvasGroup _puzzleRootCanvasGroup;
+
+        private void Awake()
+        {
+            // Use CanvasGroup to hide/show the canvas instead of SetActive,
+            // so this MonoBehaviour (which may live on the same GO) stays alive.
+            if (_puzzleRootCanvas != null)
+            {
+                _puzzleRootCanvasGroup = _puzzleRootCanvas.GetComponent<CanvasGroup>();
+                if (_puzzleRootCanvasGroup == null)
+                    _puzzleRootCanvasGroup = _puzzleRootCanvas.gameObject.AddComponent<CanvasGroup>();
+
+                // Start hidden
+                SetCanvasVisible(false);
+            }
+        }
 
         public void TransitionToPuzzle(PuzzleDefinition definition)
         {
-            if (_isTransitioning) return;
-            StartCoroutine(TransitionInCoroutine(definition));
+            if (_transitionCoroutine != null) StopCoroutine(_transitionCoroutine);
+            _transitionCoroutine = StartCoroutine(TransitionInCoroutine(definition));
         }
 
         public void TransitionToExploration()
         {
-            if (_isTransitioning) return;
-            StartCoroutine(TransitionOutCoroutine());
+            if (_transitionCoroutine != null) StopCoroutine(_transitionCoroutine);
+            _transitionCoroutine = StartCoroutine(TransitionOutCoroutine());
         }
 
         private IEnumerator TransitionInCoroutine(PuzzleDefinition definition)
         {
-            _isTransitioning = true;
             _panelAnimator.FadeIn();
             
             yield return new WaitForSecondsRealtime(_panelAnimator.FadeDuration);
             
-            _puzzleRootCanvas.gameObject.SetActive(true);
+            // Clean up old instance if we interrupted a transition out
+            if (_currentPuzzleInstance != null)
+            {
+                Destroy(_currentPuzzleInstance);
+                _currentPuzzleInstance = null;
+            }
+
+            SetCanvasVisible(true);
             _currentPuzzleInstance = Instantiate(definition.PuzzleUIPrefab, _puzzleUIPanelParent);
             
             IPuzzle puzzle = _currentPuzzleInstance.GetComponent<IPuzzle>();
@@ -51,12 +63,10 @@ namespace JyotisSugata.UI.Transitions
             _panelAnimator.FadeOut();
             
             yield return new WaitForSecondsRealtime(_panelAnimator.FadeDuration);
-            _isTransitioning = false;
         }
 
         private IEnumerator TransitionOutCoroutine()
         {
-            _isTransitioning = true;
             _panelAnimator.FadeIn();
             
             yield return new WaitForSecondsRealtime(_panelAnimator.FadeDuration);
@@ -67,12 +77,19 @@ namespace JyotisSugata.UI.Transitions
                 _currentPuzzleInstance = null;
             }
             
-            _puzzleRootCanvas.gameObject.SetActive(false);
+            SetCanvasVisible(false);
             
             _panelAnimator.FadeOut();
             
             yield return new WaitForSecondsRealtime(_panelAnimator.FadeDuration);
-            _isTransitioning = false;
+        }
+
+        private void SetCanvasVisible(bool visible)
+        {
+            if (_puzzleRootCanvasGroup == null) return;
+            _puzzleRootCanvasGroup.alpha = visible ? 1f : 0f;
+            _puzzleRootCanvasGroup.interactable = visible;
+            _puzzleRootCanvasGroup.blocksRaycasts = visible;
         }
     }
 }

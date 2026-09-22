@@ -13,7 +13,7 @@ namespace JyotisSugata.Exploration.Player.StateMachine
 
         public bool IsMet(CharacterStateMachine machine)
         {
-            if (_conditions == null || _conditions.Count == 0) return false;
+            if (_conditions == null || _conditions.Count == 0) return true;
             
             foreach (var condition in _conditions)
             {

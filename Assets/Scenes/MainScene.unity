@@ -1634,6 +1634,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::JyotisSugata.Exploration.Interaction.InteractionDetector
   _inputReader: {fileID: 11400000, guid: 40d349c2415210f40ade0a359c0cc6b8, type: 2}
   _onInteractionPromptChanged: {fileID: 11400000, guid: afb00de9691588c41a36d983efccd7e0, type: 2}
+  _interactAnimationState: {fileID: 11400000, guid: 4c4620d0f7550954a8abbe52d4d81148, type: 2}
   _detectionRadius: 2.5
   _interactableLayer:
     serializedVersion: 2
@@ -1651,6 +1652,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::JyotisSugata.Exploration.Player.StateMachine.CharacterStateMachine
   _initialState: {fileID: 11400000, guid: 8730aba6dc06e604b8e320a1df604da6, type: 2}
+  _fallbackState: {fileID: 11400000, guid: 8730aba6dc06e604b8e320a1df604da6, type: 2}
   _anyStateTransitions:
   - {fileID: 11400000, guid: 97ac953976c3e2f4f9eafe1090a86b68, type: 2}
   - {fileID: 11400000, guid: 0dba8de66c376f344b56e7c8c8caaf65, type: 2}

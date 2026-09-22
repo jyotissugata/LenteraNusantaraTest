@@ -34,6 +34,7 @@ namespace JyotisSugata.UI.Transitions
         {
             if (_fadeOverlay != null)
             {
+                _fadeOverlay.DOKill();
                 _fadeOverlay.gameObject.SetActive(true);
                 _fadeOverlay.DOFade(1f, _fadeDuration).SetUpdate(true);
             }
@@ -43,6 +44,7 @@ namespace JyotisSugata.UI.Transitions
         {
             if (_fadeOverlay != null)
             {
+                _fadeOverlay.DOKill();
                 _fadeOverlay.DOFade(0f, _fadeDuration).SetUpdate(true)
                     .OnComplete(() => _fadeOverlay.gameObject.SetActive(false));
             }
