@@ -1,16 +1,8 @@
-using JyotisSugata.Core.Events;
-using JyotisSugata.Core.StateMachine;
-using JyotisSugata.Core.Input;
-using JyotisSugata.Exploration.Player;
-using JyotisSugata.Exploration.Interaction;
-using JyotisSugata.Puzzles.Shared;
-using JyotisSugata.Puzzles.MemoryMatch;
-using JyotisSugata.Puzzles.NumpadPasscode;
-using JyotisSugata.UI.HUD;
-using JyotisSugata.UI.Transitions;
-
 using System.Collections;
+
 using UnityEngine;
+
+using JyotisSugata.Puzzles.Shared;
 
 namespace JyotisSugata.Puzzles.MemoryMatch
 {
@@ -111,15 +103,31 @@ namespace JyotisSugata.Puzzles.MemoryMatch
 
         private IEnumerator FlipBackAfterDelay(int a, int b)
         {
+            // 1. Let the player see both cards for a moment.
             yield return new WaitForSecondsRealtime(1f);
+
+            // 2. Reset model data so IsFaceUp is false again.
             if (_model != null)
             {
                 _model.ResetMismatchedPair(a, b);
             }
+
+            // 3. Play the flip-back animation on the View.
             if (_view != null)
             {
                 _view.ShowCard(a, false);
                 _view.ShowCard(b, false);
+            }
+
+            // 4. Wait for the flip-back animation to fully complete before unlocking.
+            //    CardView's flip animation uses DOTween. Get its duration from the View.
+            float flipDuration = _view != null ? _view.GetFlipDuration() : 0.3f;
+            yield return new WaitForSecondsRealtime(flipDuration);
+
+            // 5. Unlock input — player can now click cards again.
+            if (_model != null)
+            {
+                _model.SetInputLocked(false);
             }
         }
 

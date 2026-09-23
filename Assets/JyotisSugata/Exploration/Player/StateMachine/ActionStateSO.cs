@@ -108,4 +108,4 @@ namespace JyotisSugata.Exploration.Player.StateMachine
                 machine.Animator.ResetTrigger(_animationTrigger);
         }
     }
-}
+}

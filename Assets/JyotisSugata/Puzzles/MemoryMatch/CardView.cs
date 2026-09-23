@@ -1,17 +1,8 @@
-using JyotisSugata.Core.Events;
-using JyotisSugata.Core.StateMachine;
-using JyotisSugata.Core.Input;
-using JyotisSugata.Exploration.Player;
-using JyotisSugata.Exploration.Interaction;
-using JyotisSugata.Puzzles.Shared;
-using JyotisSugata.Puzzles.MemoryMatch;
-using JyotisSugata.Puzzles.NumpadPasscode;
-using JyotisSugata.UI.HUD;
-using JyotisSugata.UI.Transitions;
-
 using System;
+
 using UnityEngine;
 using UnityEngine.UI;
+
 using DG.Tweening;
 
 namespace JyotisSugata.Puzzles.MemoryMatch
@@ -73,6 +64,8 @@ namespace JyotisSugata.Puzzles.MemoryMatch
                 transform.DOScaleX(1, _flipDuration / 2f).SetUpdate(true).OnComplete(() => _isAnimating = false);
             });
         }
+
+        public float FlipDuration => _flipDuration;
 
         public void SetMatched()
         {

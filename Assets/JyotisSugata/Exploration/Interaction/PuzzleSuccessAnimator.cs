@@ -1,6 +1,7 @@
 using UnityEngine;
-using DG.Tweening;
 using UnityEngine.Events;
+
+using DG.Tweening;
 
 namespace JyotisSugata.Exploration.Interaction
 {

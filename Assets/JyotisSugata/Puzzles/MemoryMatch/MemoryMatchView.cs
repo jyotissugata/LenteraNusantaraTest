@@ -1,18 +1,10 @@
-using JyotisSugata.Core.Events;
-using JyotisSugata.Core.StateMachine;
-using JyotisSugata.Core.Input;
-using JyotisSugata.Exploration.Player;
-using JyotisSugata.Exploration.Interaction;
-using JyotisSugata.Puzzles.Shared;
-using JyotisSugata.Puzzles.MemoryMatch;
-using JyotisSugata.Puzzles.NumpadPasscode;
-using JyotisSugata.UI.HUD;
-using JyotisSugata.UI.Transitions;
-
 using System;
 using System.Collections.Generic;
+
 using UnityEngine;
 using UnityEngine.UI;
+
+using JyotisSugata.Puzzles.Shared;
 
 namespace JyotisSugata.Puzzles.MemoryMatch
 {
@@ -95,6 +87,17 @@ namespace JyotisSugata.Puzzles.MemoryMatch
         public void TriggerComplete()
         {
             CompleteThisPuzzle();
+        }
+
+        /// <summary>
+        /// Returns the flip animation duration from the first card view.
+        /// Used by the Controller to know exactly when to unlock input.
+        /// </summary>
+        public float GetFlipDuration()
+        {
+            if (_cardViews.Count > 0 && _cardViews[0] != null)
+                return _cardViews[0].FlipDuration;
+            return 0.3f;
         }
 
         private void HandleCardClicked(int index)

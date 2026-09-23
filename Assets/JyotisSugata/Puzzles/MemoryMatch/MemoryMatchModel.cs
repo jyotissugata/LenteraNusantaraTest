@@ -1,14 +1,3 @@
-using JyotisSugata.Core.Events;
-using JyotisSugata.Core.StateMachine;
-using JyotisSugata.Core.Input;
-using JyotisSugata.Exploration.Player;
-using JyotisSugata.Exploration.Interaction;
-using JyotisSugata.Puzzles.Shared;
-using JyotisSugata.Puzzles.MemoryMatch;
-using JyotisSugata.Puzzles.NumpadPasscode;
-using JyotisSugata.UI.HUD;
-using JyotisSugata.UI.Transitions;
-
 using System;
 using System.Collections.Generic;
 
@@ -30,6 +19,9 @@ namespace JyotisSugata.Puzzles.MemoryMatch
         private int _matchesFound = 0;
         private int _totalPairs;
 
+        // While true, FlipCard ignores all input (e.g., during flip-back animation)
+        private bool _isInputLocked = false;
+
         public event Action<int, bool> OnCardFlipped;
         public event Action<int, int> OnPairMatched;
         public event Action<int, int> OnPairMismatched;
@@ -41,6 +33,7 @@ namespace JyotisSugata.Puzzles.MemoryMatch
             _matchesFound = 0;
             _firstFlippedIndex = -1;
             _secondFlippedIndex = -1;
+            _isInputLocked = false;
             _cards.Clear();
 
             List<CardData> tempCards = new List<CardData>();
@@ -70,6 +63,7 @@ namespace JyotisSugata.Puzzles.MemoryMatch
 
         public bool CanFlipCard(int cardIndex)
         {
+            if (_isInputLocked) return false;
             if (cardIndex < 0 || cardIndex >= _cards.Count) return false;
             return !_cards[cardIndex].IsFaceUp && !_cards[cardIndex].IsMatched && _secondFlippedIndex == -1;
         }
@@ -92,6 +86,21 @@ namespace JyotisSugata.Puzzles.MemoryMatch
             }
         }
 
+        /// <summary>
+        /// Called by the Controller to block/unblock input during the flip-back animation.
+        /// </summary>
+        public void SetInputLocked(bool locked)
+        {
+            _isInputLocked = locked;
+
+            // When unlocking, also clear the selection state so fresh clicks work correctly.
+            if (!locked)
+            {
+                _firstFlippedIndex = -1;
+                _secondFlippedIndex = -1;
+            }
+        }
+
         private void EvaluatePair()
         {
             int a = _firstFlippedIndex;
@@ -103,7 +112,11 @@ namespace JyotisSugata.Puzzles.MemoryMatch
                 _cards[b].IsMatched = true;
                 _matchesFound++;
                 OnPairMatched?.Invoke(a, b);
-                
+
+                // On match we can clear immediately — no lock needed.
+                _firstFlippedIndex = -1;
+                _secondFlippedIndex = -1;
+
                 if (_matchesFound >= _totalPairs)
                 {
                     OnAllPairsMatched?.Invoke();
@@ -111,11 +124,12 @@ namespace JyotisSugata.Puzzles.MemoryMatch
             }
             else
             {
+                // Lock input BEFORE notifying — the Controller's coroutine will unlock after animation.
+                _isInputLocked = true;
                 OnPairMismatched?.Invoke(a, b);
+                // NOTE: _firstFlippedIndex/_secondFlippedIndex are intentionally NOT reset here.
+                // SetInputLocked(false) will reset them once the animation finishes.
             }
-
-            _firstFlippedIndex = -1;
-            _secondFlippedIndex = -1;
         }
 
         public List<CardData> GetCards()
