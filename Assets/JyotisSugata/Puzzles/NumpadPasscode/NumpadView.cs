@@ -21,6 +21,7 @@ namespace JyotisSugata.Puzzles.NumpadPasscode
     {
         [Header("References")]
         [SerializeField] private TextMeshProUGUI _displayText;
+        [SerializeField] private TextMeshProUGUI _hintText;
         [SerializeField] private Button[] _digitButtons = new Button[10];
         [SerializeField] private Button _deleteButton;
         [SerializeField] private CanvasGroup _panelCanvasGroup;
@@ -60,6 +61,14 @@ namespace JyotisSugata.Puzzles.NumpadPasscode
             if (_displayText != null)
             {
                 _displayText.text = text;
+            }
+        }
+
+        public void UpdateHint(string secretCode)
+        {
+            if (_hintText != null)
+            {
+                _hintText.text = $"Hint: {secretCode}";
             }
         }
 

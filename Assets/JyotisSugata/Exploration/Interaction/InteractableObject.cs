@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Events;
 using JyotisSugata.Core.Events;
 using JyotisSugata.Puzzles.Shared;
 
@@ -14,10 +15,17 @@ namespace JyotisSugata.Exploration.Interaction
         [Header("Settings")]
         [SerializeField] private string _promptText = "Press E to Interact";
 
+        [Header("Feedback Events")]
+        public UnityEvent OnPuzzleSolved;
+        public UnityEvent OnPuzzleCanceled;
+
         private GameObject _activeVFX;
         private bool _playerInRange = false;
 
         public static System.Action<Transform> OnInteractionStarted;
+        
+        // Track the currently active interactable so the GameStateManager can tell it when it's done
+        public static InteractableObject CurrentActiveInteractable { get; private set; }
 
         public void Interact()
         {
@@ -27,12 +35,26 @@ namespace JyotisSugata.Exploration.Interaction
                 return;
             }
             
+            CurrentActiveInteractable = this;
             OnInteractionStarted?.Invoke(this.transform);
 
             if (_onPuzzleRequested != null)
             {
                 _onPuzzleRequested.Raise(_puzzleDefinition);
             }
+        }
+
+        public void HandlePuzzleSolved()
+        {
+            OnPuzzleSolved?.Invoke();
+            // Optional: disable interaction after solved so they can't replay it
+            // GetComponent<Collider>().enabled = false;
+            // enabled = false;
+        }
+
+        public void HandlePuzzleCanceled()
+        {
+            OnPuzzleCanceled?.Invoke();
         }
 
         public string GetPromptText()

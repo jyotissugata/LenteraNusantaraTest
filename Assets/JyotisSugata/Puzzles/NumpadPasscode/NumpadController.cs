@@ -52,6 +52,10 @@ namespace JyotisSugata.Puzzles.NumpadPasscode
             if (_view != null)
             {
                 _view.Initialize(definition);
+                if (_model != null)
+                {
+                    _view.UpdateHint(_model.SecretCode);
+                }
             }
         }
 

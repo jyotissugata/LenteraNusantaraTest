@@ -48,10 +48,10 @@ namespace JyotisSugata.Core.StateMachine
                 _onPuzzleRequested.Subscribe(HandlePuzzleRequested);
                 
             if (_onPuzzleCompleted != null)
-                _onPuzzleCompleted.Subscribe(HandlePuzzleCompletedOrCanceled);
+                _onPuzzleCompleted.Subscribe(HandlePuzzleCompleted);
                 
             if (_onPuzzleCanceled != null)
-                _onPuzzleCanceled.Subscribe(HandlePuzzleCompletedOrCanceled);
+                _onPuzzleCanceled.Subscribe(HandlePuzzleCanceled);
         }
 
         private void Start()
@@ -65,10 +65,10 @@ namespace JyotisSugata.Core.StateMachine
                 _onPuzzleRequested.Unsubscribe(HandlePuzzleRequested);
                 
             if (_onPuzzleCompleted != null)
-                _onPuzzleCompleted.Unsubscribe(HandlePuzzleCompletedOrCanceled);
+                _onPuzzleCompleted.Unsubscribe(HandlePuzzleCompleted);
                 
             if (_onPuzzleCanceled != null)
-                _onPuzzleCanceled.Unsubscribe(HandlePuzzleCompletedOrCanceled);
+                _onPuzzleCanceled.Unsubscribe(HandlePuzzleCanceled);
         }
 
         private void HandlePuzzleRequested(PuzzleDefinition definition)
@@ -77,8 +77,21 @@ namespace JyotisSugata.Core.StateMachine
             TransitionToState(_puzzleState, GameStateType.Puzzle);
         }
 
-        private void HandlePuzzleCompletedOrCanceled()
+        private void HandlePuzzleCompleted()
         {
+            if (InteractableObject.CurrentActiveInteractable != null)
+            {
+                InteractableObject.CurrentActiveInteractable.HandlePuzzleSolved();
+            }
+            TransitionToState(_explorationState, GameStateType.Exploration);
+        }
+
+        private void HandlePuzzleCanceled()
+        {
+            if (InteractableObject.CurrentActiveInteractable != null)
+            {
+                InteractableObject.CurrentActiveInteractable.HandlePuzzleCanceled();
+            }
             TransitionToState(_explorationState, GameStateType.Exploration);
         }
 

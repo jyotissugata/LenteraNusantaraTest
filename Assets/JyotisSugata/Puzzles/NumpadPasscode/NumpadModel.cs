@@ -24,6 +24,8 @@ namespace JyotisSugata.Puzzles.NumpadPasscode
         public event Action OnCodeCorrect;
         public event Action OnCodeIncorrect;
 
+        public string SecretCode => _secretCode;
+
         public void Initialize(int digitCount)
         {
             _maxDigits = digitCount;

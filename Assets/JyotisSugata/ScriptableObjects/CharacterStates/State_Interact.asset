@@ -14,7 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::JyotisSugata.Exploration.Player.StateMachine.ActionStateSO
   _transitions: []
   _animationTrigger: Interact
+  _animationStateName: Interact
   _animatorLayerIndex: 0
   _lockMovement: 1
   _moveSpeedDuringAction: 0
   _nextState: {fileID: 0}
+  _maxDuration: 3
